@@ -1,9 +1,9 @@
 # app.py
 import logging
 
-# Configure logging once, at module import or __main__ execution
+# Configure root logging
 logging.basicConfig(
-    level=logging.INFO,  # change to DEBUG for more detail
+    level=logging.INFO,  # default level (can be overridden by pytest.ini or CLI)
     format="%(levelname)s:%(name)s:%(message)s"
 )
 
@@ -11,7 +11,10 @@ logger = logging.getLogger(__name__)
 
 def add(a, b):
     result = a + b
-    logger.info("add() called with a=%s, b=%s, result=%s", a, b, result)
+    # Debug-level log (won't show unless level is set to DEBUG)
+    logger.debug("add() inputs: a=%s, b=%s", a, b)
+    # Info-level log (shows by default)
+    logger.info("add() result=%s", result)
     return result
 
 if __name__ == "__main__":
