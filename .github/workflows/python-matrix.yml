@@ -1,0 +1,35 @@
+name: Python CI (Matrix w/ per-job log levels)
+
+on: [push]
+
+jobs:
+  ci:
+    name: py${{ matrix.python-version }} • logs=${{ matrix.log_level }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - python-version: '3.10'
+            log_level: INFO
+          - python-version: '3.11'
+            log_level: DEBUG
+          - python-version: '3.12'
+            log_level: INFO
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run app.py (show script logs)
+        run: python app.py
+
+      - name: Run pytest (matrix log level)
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: pytest -o log_cli=true -o log_cli_level=${{ matrix.log_level }}
